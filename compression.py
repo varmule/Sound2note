@@ -237,27 +237,23 @@ def main(file:str,ms=50,nombre_de_freq=3,graphique=False):
         s2=futures_frequences(sous_data,samplerate,nombre_de_freq=nombre_de_freq,graphique=sous_graphique)
 
         s=np.concatenate((s,s2))
-        print("sous data et data ",len(sous_data),len(s2))
         if graphique == True:
             afficher_signaux(t[range_start:range_end],sous_data,s2)
 
     # On traite le dernier sous-signal (le fichier audio n'est pas toujours divisible par ms millisecondes)
     points_fin=int(len(data)%points)
     sous_data=data[len(data)-points_fin:]
-    print(len(sous_data), "sous data fin")
     try:
         s2=futures_frequences(sous_data,samplerate,nombre_de_freq=nombre_de_freq,graphique=graphique)
     except:
         s2=np.array([],dtype=np.float32)
-    print(len(s2), "s2 fin")
     s=np.concatenate((s,s2))
 
-    print(len(data),len(s))
 
 
     # On recrée le signal audio a partir de la fft modifiee
 
-    print("Le PSNR entre les fichiers audio est :",round(psnr(data,s),2),"dB")
+    print("\nLa PSNR entre les fichiers audio est :",round(psnr(data,s),2),"dB\n(PSNR élevée = fichiers qui se ressemblent)\n")
 
     sf.write('reconstructed.wav',np.real(s).astype(np.float32),samplerate)
     if graphique:

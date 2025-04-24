@@ -1,0 +1,8 @@
+https://github.com/balzer82/FFT-Python/blob/master/FFT-Tutorial.ipynb
+https://onlinesound.net/download/audio/lowmid-tone-freq-440hz
+https://docs.scipy.org/doc/scipy/reference/generated/scipy.io.wavfile.read.html
+https://www.slingacademy.com/article/scipy-understanding-fft-ifft-function-3-examples/
+https://fr.wikipedia.org/wiki/Note_de_musique
+https://stackoverflow.com/questions/31521208/take-fft-and-ifft-for-a-few-specific-frequencies
+https://huggingface.co/learn/audio-course/fr/chapter1/audio_data
+https://librosa.org/doc/latest/generated/librosa.amplitude_to_db.html

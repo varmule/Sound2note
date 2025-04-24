@@ -1,8 +1,16 @@
-https://github.com/balzer82/FFT-Python/blob/master/FFT-Tutorial.ipynb
-https://onlinesound.net/download/audio/lowmid-tone-freq-440hz
-https://docs.scipy.org/doc/scipy/reference/generated/scipy.io.wavfile.read.html
-https://www.slingacademy.com/article/scipy-understanding-fft-ifft-function-3-examples/
-https://fr.wikipedia.org/wiki/Note_de_musique
-https://stackoverflow.com/questions/31521208/take-fft-and-ifft-for-a-few-specific-frequencies
+https://github.com/balzer82/FFT-Python/blob/master/FFT-Tutorial.ipynb : tuto très intéressant sur l'implémentation de la fft en python
+https://onlinesound.net/download/audio/lowmid-tone-freq-440hz : le fichier la-440.wav
+https://docs.scipy.org/doc/scipy/reference/generated/scipy.io.wavfile.read.html : documentation qui permet d'ouvrir un fichier son en python
+https://www.slingacademy.com/article/scipy-understanding-fft-ifft-function-3-examples/ = exemples de script python utilisant la fft
+https://fr.wikipedia.org/wiki/Note_de_musique = il y a les fréquences de toutes les notes de musique !
+https://stackoverflow.com/questions/31521208/take-fft-and-ifft-for-a-few-specific-frequencies = personne qui se demande commen sélectionner des fréquences spécifiques de la fft
 https://huggingface.co/learn/audio-course/fr/chapter1/audio_data
 https://librosa.org/doc/latest/generated/librosa.amplitude_to_db.html
+https://www.youtube.com/watch?v=-Yxj3yfvY-4 : short time fourier transform
+https://en.wikipedia.org/wiki/Pitch_detection_algorithm : détection de note
+https://www-fourier.ujf-grenoble.fr/~faure/enseignement/musique/cours_chap_signal.pdf : cours très complet sur le son
+https://fr.wikipedia.org/wiki/Spectre_sonore : montre ce qu'est une spectre sonore, permet de lire un spectrogramme
+https://huggingface.co/learn/audio-course/fr/chapter1/audio_data : montre comment convertir les fft en échelle logarithmique
+https://www.youtube.com/watch?v=s2K1JfNR7Sc : vidéo sur la fft
+https://realpython.com/python-scipy-fft/ : exemple de code qui utilise la fft
+https://www.youtube.com/watch?v=O0Y8FChBaFU : idem

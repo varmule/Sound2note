@@ -3,7 +3,7 @@
 Prend un son, le découpe en paquets de n millissecondes, et arrondit ses fréquences aux notes de musique les plus proches afin de le modifier.
 
 ## Prérequis
--Python
+-Python (https://www.python.org/downloads/)
 
 
 Les modules :

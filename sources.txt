@@ -18,3 +18,4 @@ https://docs.python.org/3/library/argparse.html : permet de mettre des arguments
 https://fr.wikipedia.org/wiki/Psychoacoustique : explique les bases de la psychoacoustique
 https://fr.wikipedia.org/wiki/Peak_Signal_to_Noise_Ratio : Explication de la PSNR
 https://www.cochlea.eu/son/psychoacoustique/ : Document TRES interessant sur l'oreille et le son
+https://www.youtube.com/watch?v=uBEL3YVzMwk : vidéo qui a inspiré le concept de ce project

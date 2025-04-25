@@ -1,4 +1,3 @@
-import numpy as np
 import matplotlib.pyplot as plt
 import soundfile as sf
 from scipy import fft
@@ -29,20 +28,12 @@ def nom_de_la_note(frequence:float):
     """
     arrondie = frequence_note(frequence)
     if arrondie in notes:
-        i = notes.index(arrondie)
-        if i % 12 == 0:nom = "Do"
-        elif i % 12 == 1:nom = "Do#"
-        elif i % 12 == 2:nom = "Re"
-        elif i % 12 == 3:nom = "Re#"
-        elif i % 12 == 4:nom = "Mi"
-        elif i % 12 == 5:nom = "Fa"
-        elif i % 12 == 6:nom = "Fa#"
-        elif i % 12 == 7:nom = "Sol"
-        elif i % 12 == 8:nom = "Sol#"
-        elif i % 12 == 9:nom = "La"
-        elif i % 12 == 10:nom = "La#"
-        else:nom = "Si"
-        nom += str(int(i/12)-1)
+        noms = ["Do", "Do#", "Re", "Re#", "Mi", "Fa", "Fa#", "Sol", "Sol#", "La", "La#", "Si"]
+        # On arrondit la frequence a la note la plus proche
+        # On cherche l'index de la frequence dans le tableau notes
+        nom = noms[notes.index(arrondie)%12]
+        # On cherche l'octave de la note
+        nom += str(int(notes.index(arrondie)/12)-1)
         return nom
     else:
         return ""

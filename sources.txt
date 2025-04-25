@@ -1,3 +1,5 @@
+## Sources
+
 https://github.com/balzer82/FFT-Python/blob/master/FFT-Tutorial.ipynb : tuto très intéressant sur l'implémentation de la fft en python
 https://onlinesound.net/download/audio/lowmid-tone-freq-440hz : le fichier la-440.wav
 https://docs.scipy.org/doc/scipy/reference/generated/scipy.io.wavfile.read.html : documentation qui permet d'ouvrir un fichier son en python

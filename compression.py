@@ -1,10 +1,8 @@
-import matplotlib.pyplot as plt
-import soundfile as sf
-from scipy import fft
+from matplotlib import pyplot as plt
+from scipy import fft,io
 import numpy as np
 import librosa
 import argparse
-
 # frequences des notes de musique
 notes=[
     16.35,32.70,65.41,130.81,261.63,523.25,1046.50,2093.00,4186.01,8372.02,16744.04,
@@ -204,7 +202,8 @@ def main(file:str,ms=50,nombre_de_freq=3,graphique=False):
     Fonction principale qui lit un fichier audio, le traite et affiche les graphiques.
     """
     # On lit le fichier audio
-    data,samplerate = sf.read(file)
+    samplerate, data = io.wavfile.read(file,mmap=np.float32)
+
     # On crée un tableau de temps pour l'affichage
     t = np.arange(len(data)) / samplerate
     # On crée un tableau vide pour stocker le signal modifie
@@ -250,10 +249,9 @@ def main(file:str,ms=50,nombre_de_freq=3,graphique=False):
     print("PNSR compris entre 40 et 50 dB = perte de qualité imperceptible")
     print("PNSR supérieur à 50 dB = fichiers identiques\n")
     print("Le fichier audio modifié a été enregistré sous le nom 'reconstructed.wav'")
-
-    sf.write('reconstructed.wav',np.real(s).astype(np.float32),samplerate)
+    io.wavfile.write('reconstructed.wav', samplerate, np.real(s).astype(np.float32))
     if graphique:
-        afficher_spectrogramme(data,s,samplerate)
+        afficher_spectrogramme(data.astype(np.float32),s.astype(np.float32),samplerate)
     plt.show()
 
 

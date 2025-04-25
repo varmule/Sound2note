@@ -92,13 +92,13 @@ def afficher_frequences(X:np.ndarray,Y:np.ndarray,Y2:np.ndarray):
     """
     plt.figure("Fréquences")
     plt.subplot(211)
-    plt.title("Frequence d'origine")
+    plt.title("Frequences d'origines")
     plt.xlabel("frequence (Hz)")
     plt.ylabel("Amplitude")
 #    plt.plot(X,librosa.amplitude_to_db(np.abs(Y)))
     plt.plot(X,np.abs(Y))
     plt.subplot(212)
-    plt.title("Frequence modifiee")
+    plt.title("Frequences modifiees")
     plt.xlabel("frequence (Hz)")
     plt.ylabel("Amplitude")
     plt.plot(X,np.abs(Y2))
@@ -253,7 +253,12 @@ def main(file:str,ms=50,nombre_de_freq=3,graphique=False):
 
     # On recrée le signal audio a partir de la fft modifiee
 
-    print("\nLa PSNR entre les fichiers audio est :",round(psnr(data,s),2),"dB\n(PSNR élevée = fichiers qui se ressemblent)\n")
+    print("\nLa PSNR entre les fichiers audio est :",round(psnr(data,s),2),"dB\nPSNR élevée = fichiers qui se ressemblent :")
+    print("PNSR inférieur à 20 dB = perte de qualité importante")
+    print("PNSR compris entre 20 et 40 dB = perte de qualité acceptable")
+    print("PNSR compris entre 40 et 50 dB = perte de qualité imperceptible")
+    print("PNSR supérieur à 50 dB = fichiers identiques\n")
+    print("Le fichier audio modifié a été enregistré sous le nom 'reconstructed.wav'")
 
     sf.write('reconstructed.wav',np.real(s).astype(np.float32),samplerate)
     if graphique:

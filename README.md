@@ -14,8 +14,6 @@ Les modules :
 
 -librosa
 
--soundfile
-
 -matplotlib (fourni avec python)
 
 -argparse (fourni avec python)

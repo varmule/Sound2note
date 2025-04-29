@@ -20,7 +20,11 @@ Les modules :
 
 
 Pour installer les modules, simplement éxecuter :
-`pip install [nom du module]` ou `pip3 install [nom du module]` selon votre version du python (si vous ne savez pas, essayez les 2)
+Sous mac/linux :
+`pip install [nom du module]` ou `pip3 install [nom du module]` selon votre version du python (si vous ne savez pas, utilisez `pip`)
+Sous windows :
+`py -m pip install [nom du module]`
+
 ## Installation
 Cliquez sur code->Download zip pour télecharger le programme python et les fichiers test.
 
@@ -28,9 +32,9 @@ Cliquez sur code->Download zip pour télecharger le programme python et les fich
 Pour lancer le programme, ouvrez tout d'abord un terminal au dossier qui contient le programme en allant sur le dossier, puis faites un clic droit sur ledit dossier et cliquer sur 'ouvrir un terminal au dossier' (ou similaire).
 
 Ensuite,  éxecutez :
-`python 3 compression.py [nom du fichier]`.
+`python compression.py [nom du fichier]`
 
-Si vous voulez utiliser des arguments (comme le nombre de fréquences retenues, le nombre de millisecondes par paquet ou désactiver les graphiques), éxecutez `python 3 compression.py -h` pour voir les paramètres et rajoutez les à la fin de la commande. Par exemple, `python3 compression.py SNCF.wav --ms 100 --freq 5 --graphique`.
+Si vous voulez utiliser des arguments (comme le nombre de fréquences retenues, le nombre de millisecondes par paquet ou désactiver les graphiques), éxecutez `python compression.py -h` pour voir les paramètres et rajoutez les à la fin de la commande. Par exemple, `python compression.py SNCF.wav --ms 100 --freq 5 --graphique`.
 
 Après éxecution, un fichier reconstructed.wav sera créé. Il correspond au fichier son modifié selon vos paramètres.
 

@@ -30,7 +30,7 @@ Pour lancer le programme, ouvrez tout d'abord un terminal au dossier qui contien
 Ensuite,  éxecutez :
 `python 3 compression.py [nom du fichier]`.
 
-Si vous voulez utiliser des arguments (comme le nombre de fréquences retenues, le nombre de millisecondes par paquet ou désactiver les graphiques), éxecutez `python 3 compression.py -h` pour voir les paramètres et rajoutez les à la fin de la commende. Par exemple, `python3 compression.py SNCF.wav --ms 100 --freq 5 --graphique`.
+Si vous voulez utiliser des arguments (comme le nombre de fréquences retenues, le nombre de millisecondes par paquet ou désactiver les graphiques), éxecutez `python 3 compression.py -h` pour voir les paramètres et rajoutez les à la fin de la commande. Par exemple, `python3 compression.py SNCF.wav --ms 100 --freq 5 --graphique`.
 
 Après éxecution, un fichier reconstructed.wav sera créé. Il correspond au fichier son modifié selon vos paramètres.
 

@@ -4,13 +4,13 @@ Prend un son, le découpe en paquets de n millissecondes, et arrondit ses fréqu
 
 ## Prérequis
 
-*Python (https://www.python.org/downloads/)
-*Les modules :
-    *numpy
-    *scipy
-    *librosa
-    *matplotlib
-    *argparse
+* Python (https://www.python.org/downloads/)
+* Les modules :
+    * numpy
+    * scipy
+    * librosa
+    * matplotlib
+    * argparse
 
 
 Pour installer les modules, simplement éxecuter :
@@ -26,7 +26,7 @@ Extrayez ensuite le fichier .zip
 ## Execution
 Pour lancer le programme, ouvrez tout d'abord un terminal au dossier qui contient le programme en allant sur le dossier, puis faites un clic droit sur ledit dossier et cliquer sur 'ouvrir un terminal au dossier' (ou similaire).
 
-*Attention* : sous windows, la commande `python` (qui fonctionne sous linux et mac) est remplacée par la commande `py`. Veillez donc à remplacer le début de toutes les commandes.
+*Attention*  : sous windows, la commande `python` (qui fonctionne sous linux et mac) est remplacée par la commande `py`. Veillez donc à remplacer le début de toutes les commandes.
 
 Ensuite,  éxecutez :
 `python compression.py [nom du fichier]` sous mac/linux (ou `py compression.py [nom du fichier]` sous windows)

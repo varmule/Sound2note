@@ -202,8 +202,18 @@ def main(file:str,ms=50,nombre_de_freq=3,graphique=False):
     Fonction principale qui lit un fichier audio, le traite et affiche les graphiques.
     """
     # On lit le fichier audio
-    samplerate, data = io.wavfile.read(file,mmap=np.float32)
-
+    samplerate, data = io.wavfile.read(file)
+    if data.dtype == np.int16:
+        # On convertit le signal en float32
+        data = data.astype(np.float32) / 32768.0
+    elif data.dtype == np.int32:
+        # On convertit le signal en float32
+        data = data.astype(np.float32) / 2147483648.0
+    elif data.dtype == np.float32:
+        # On ne fait rien
+        pass
+    else:
+        raise ValueError("Le fichier audio doit etre en .wav et en mono")
     # On crée un tableau de temps pour l'affichage
     t = np.arange(len(data)) / samplerate
     # On crée un tableau vide pour stocker le signal modifie

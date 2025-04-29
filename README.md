@@ -14,9 +14,9 @@ Les modules :
 
 -librosa
 
--matplotlib (fourni avec python)
+-matplotlib
 
--argparse (fourni avec python)
+-argparse
 
 
 Pour installer les modules, simplement éxecuter :

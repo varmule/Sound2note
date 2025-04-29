@@ -32,8 +32,10 @@ Extrayez ensuite le fichier .zip
 ## Execution
 Pour lancer le programme, ouvrez tout d'abord un terminal au dossier qui contient le programme en allant sur le dossier, puis faites un clic droit sur ledit dossier et cliquer sur 'ouvrir un terminal au dossier' (ou similaire).
 
+Attention : sous windows, la commande `python` (qui fonctionne sous linux et mac) est remplacée par la commande `py`. Veillez donc à remplacer le début de toutes les commandes.
+
 Ensuite,  éxecutez :
-`python compression.py [nom du fichier]`
+`python compression.py [nom du fichier]` sous mac/linux (et `py compression.py [nom du fichier]` sous windows)
 
 Si vous voulez utiliser des arguments (comme le nombre de fréquences retenues, le nombre de millisecondes par paquet ou désactiver les graphiques), éxecutez `python compression.py -h` pour voir les paramètres et rajoutez les à la fin de la commande. Par exemple, `python compression.py SNCF.wav --ms 100 --freq 5 --graphique`.
 

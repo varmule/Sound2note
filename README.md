@@ -27,6 +27,7 @@ Sous windows :
 
 ## Installation
 Cliquez sur code->Download zip pour télecharger le programme python et les fichiers test.
+Extrayez ensuite le fichier .zip
 
 ## Execution
 Pour lancer le programme, ouvrez tout d'abord un terminal au dossier qui contient le programme en allant sur le dossier, puis faites un clic droit sur ledit dossier et cliquer sur 'ouvrir un terminal au dossier' (ou similaire).

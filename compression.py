@@ -191,7 +191,7 @@ def futures_frequences(data:np.ndarray,samp_fichier:int,nombre_de_freq,graphique
     signal_modifie = fft.irfft(Y2)
 
     if graphique == True:
-        afficher_frequences(X/samp_fichier,Y,Y2)
+        afficher_frequences(X,Y,Y2)
     # On affiche les notes retenues
     print(notes)
     return signal_modifie.astype(np.float32)

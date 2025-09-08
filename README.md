@@ -14,11 +14,13 @@ Ouvrez un terminal et exécutez
 
 `cd Sound2note`
 
-`pip3 install -r requirements.txt`
+`pip3 install -r requirements.txt` (Sous windows, si cette commande retourne une erreur, essayez `py3 -m pip install -r requirements.txt`)
+
+
 
 ## Execution
 
-*Attention  : sous windows, la commande `python` (qui fonctionne sous linux et mac) est remplacée par la commande `py`. Veillez donc à remplacer le début de toutes les commandes.*
+*Attention  : sous windows, la commande `python3` (qui fonctionne sous linux et mac) est parfois remplacée par la commande `py3`. Veillez donc à remplacer le début de toutes les commandes si  `python3` ne fonctionne pas.*
 
 Après les commandes précédentes,  exécutez : `python3 gui.py`
 

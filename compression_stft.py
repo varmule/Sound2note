@@ -1,22 +1,24 @@
 from matplotlib import pyplot as plt
 from scipy import io
 import numpy as np
-import argparse
 
 def hann_window(N):
-    """Génère une fenêtre de Hann."""
+    """Génère une fenêtre de Hann.
+    Permet de lisser les bords des frames dans la STFT"""
     return 0.5 - 0.5 * np.cos(2 * np.pi * np.arange(N) / (N))
 def hamming_window(N):
     """Fenêtre de Hamming : similaire à Hann mais avec une forme légèrement différente"""
     return 0.54 - 0.46 * np.cos(2 * np.pi * np.arange(N) / (N - 1))
 def rect_window(N):
-    """Fenêtre rectangulaire : pas d'atténuation, brut (moins recommandé en général)"""
+    """Fenêtre rectangulaire : pas d'atténuation et moins recommandé en général"""
     return np.ones(N)
 
 
 class Note:
     """
     Gère les notes de musique et leurs fréquences.
+    justifieur : ajuste les fréquences dans une matrice STFT aux notes de musique les plus proches.
+    Conserve uniquement un nombre spécifié de fréquences par trame.
     """
     def __init__(self):
         """Fréquences des notes de musique (en Hz)"""
@@ -154,7 +156,9 @@ class FFT:
         """
         FFT récursive de Cooley-Tukey (pour longueur N=2^m)
         La FFT (Fast Fourier Transform) est une version optimisée de la transformée de Fourier.
+        Elle permet de passer du domaine temporel au domaine fréquentiel.
         """
+        # Pour plus de détails, voir https://fr.wikipedia.org/wiki/Transformée_de_Fourier_rapide
         x = np.asarray(x, dtype=complex)
         N = x.shape[0]
         if N <= 1:
@@ -198,11 +202,11 @@ class FFT:
         X_full[len(X_rfft):] = np.conj(X_rfft[1:-1][::-1])
         
         # iFFT via Cooley-Tukey inverse
-        x = self.ifft_ct(X_full)
+        x = self.ifft(X_full)
         
         return np.real(x)
 
-    def ifft_ct(self,X):
+    def ifft(self,X):
         """
         iFFT via Cooley-Tukey
         """
@@ -248,7 +252,7 @@ class FFT:
             output_signal[start:start + self.frame_size] += frame * window
             window_sums[start:start + self.frame_size] += window ** 2
 
-        # Normalisation
+        # Normalisation, c'est là que les fenêtres sont anulées
         nonzero = window_sums > 1e-10
         output_signal[nonzero] /= window_sums[nonzero]
         return output_signal
@@ -262,14 +266,14 @@ def psnr(audio_original,audio_compressed):
     # On s'assure que les deux signaux ont la même longueur
     audio_original = audio_original[:min(len(audio_original),len(audio_compressed))]
     audio_compressed = audio_compressed[:min(len(audio_original),len(audio_compressed))]
-    mse = np.mean((audio_original - audio_compressed) ** 2)  # Calculer l'erreur quadratique moyenne (MSE)
-    # La valeur maximale de l'audio est 1 car le type de l'audio est float64
+
+    mse = np.mean((audio_original - audio_compressed) ** 2)  # Calculer l'erreur quadratique moyenne (MSE=Mean Squared Error)
+    # La valeur maximale de l'audio est 1 car le type de l'audio est float32
     R = 1.0
     if mse == 0:
         psnrcalc = float('inf')  # Si MSE est 0, PSNR est infini (pas de perte)
     else:
-        psnrcalc = 10 * np.log10((R ** 2) / mse)
-
+        psnrcalc = 10 * np.log10((R ** 2) / mse) # C'est juste la formule
     return psnrcalc
 
 def load_audio_file(file:str):
@@ -318,12 +322,10 @@ class Graphiques:
         plt.figure("Signal d'origine")
         plt.xlabel("Temps (s)")
         plt.ylabel("Amplitude")
-        #plt.axis((0,max(t1),-1,1))
         plt.plot(t1,s1)
         plt.figure("Signal modifie")
         plt.xlabel("Temps (s)")
         plt.ylabel("Amplitude")
-        #plt.axis((0,max(t1),-1,1))
 
         plt.plot(t2,s2)
 
@@ -334,10 +336,9 @@ def main(file:str,frame_size, hop_size, nombre_de_freq):
     """
     # On lit le fichier audio
     samplerate, data = load_audio_file(file)
-
-
-
-    pad_width = frame_size  # 1 frame de chaque côté
+    pad_width = frame_size 
+    # On rajoute une frame de 0 au début et à la fin pour éviter que l'effet de Gibbs se voit
+    # Après le traitement, on enlève cette partie
     data_padded = np.pad(data, (pad_width, pad_width), mode="constant")
 
     fft=FFT(frame_size,hop_size)
@@ -349,21 +350,28 @@ def main(file:str,frame_size, hop_size, nombre_de_freq):
 
     data2 = data2_padded[pad_width:-pad_width]
 
+    # Comme on ne prend que quelques fréquences, le volume est diminué
+    # On le remonte à l'aide d'un coefficient
     coeff=max(abs(data))/max(abs(data2))
     data2*=coeff
+
+    # On calcule la PSNR
+    print(f"PSNR : {psnr(data,data2):.2f} dB")
+
     save_audio_file(data2,samplerate,"reconstructed.wav")
 
     t1 = np.linspace(0, len(data) / samplerate, len(data))
     t2 = np.linspace(0,len(data2)/samplerate,len(data2))
+    # On refait la STFT du signal modifié pour avoir le spectrogramme pratique
     verif=fft.stft(data2)
-    #print(verif[0])
     graphique.spectrogrammes(verif,stft_2,t1,t2)
     graphique.signaux(data,data2,t1,t2)
 
     plt.show()
-#main("sounds/SNCF.wav",2048,512,1)
+#main("sounds/SNCF.wav",2048,512,1) Pour tester dans l'éditeur sans passer par le terminal
 
 if __name__ == "__main__":
+    import argparse
     parser = argparse.ArgumentParser(description="Traitement audio avec STFT et compression (sous la forme sounds/fichier.wav).")
     parser.add_argument("file", type=str, help="Chemin vers le fichier audio .wav")
     parser.add_argument("--frame_size", type=int, default=2048, help="Taille de la fenêtre pour la STFT")

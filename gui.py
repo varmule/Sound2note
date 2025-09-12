@@ -21,7 +21,7 @@ class RedirectText:
         if not self.scheduled: 
             self.output.after(self.flush_interval, self.flush_buffer) # Vide le buffer après un intervalle
             self.scheduled = True
-    def flush(self): # Nécessaire, mais pas utilisé
+    def flush(self): # Nécessaire, mais juste pour être là
         pass
     def flush_buffer(self):
         if self.buffer:
@@ -179,8 +179,8 @@ class GUI(object):
         file_path = filedialog.askopenfilename(filetypes=[("Fichiers WAV", "*.wav")], initialdir="sounds")
         if file_path:
             self.file_path = file_path
-            self.file_label.config(text=f"Fichier chargé: {self.file_path.split('/')[-1]}")
             self.sample_rate, self.signal = load_audio_file(self.file_path)
+            self.file_label.config(text=f"Fichier chargé: {self.file_path.split('/')[-1]}\n1 seconde = {self.sample_rate} échantillons.")
 
         else:
             self.file_label.config(text="Aucun fichier sélectionné")
@@ -203,7 +203,7 @@ class GUI(object):
             self.stream.stop()
             self.stream.close()
             self.signal = self.signal.flatten()
-            self.file_label.config(text="Audio enregistré via le micro")
+            self.file_label.config(text=f"Audio enregistré.\n1 seconde = {self.sample_rate} échantillons.")
     def calculate_stft(self):
         """Calcule la STFT et la reconstruction du signal"""
         if self.signal is None:

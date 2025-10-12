@@ -48,6 +48,9 @@ class GUI(object):
         self.recording = False
         self.signal = None
         self.sample_rate = None
+        self.frame_size = None
+        self.hop_size = None
+        self.nombre_de_freq = None
         self.signal_reconstructed = None
         self.siglal_stft_matrix = None
         self.stft_matrix_reconstructed = None
@@ -210,18 +213,26 @@ class GUI(object):
             messagebox.showerror("Erreur", "Veuillez d'abord charger un fichier audio.")
             return
         try:
-            frame_size = int(eval(self.frame_entry.get()))
-            hop_size = int(eval(self.hop_entry.get()))
-            nombre_de_freq = int(eval(self.freq_entry.get()))
+            self.frame_size = int(eval(self.frame_entry.get()))
+            self.hop_size = int(eval(self.hop_entry.get()))
+            self.nombre_de_freq = int(eval(self.freq_entry.get()))
+            if self.frame_size <= 0 or self.hop_size <= 0 or self.nombre_de_freq <= 0:
+                raise ValueError
+            if self.hop_size > self.frame_size:
+                messagebox.showerror("Erreur", "La taille du saut (hop size) doit être inférieure ou égale à la taille de la fenêtre (frame size).")
+                return
+            if self.nombre_de_freq > self.frame_size // 2 + 1:
+                messagebox.showerror("Erreur", "Le nombre de fréquences conservées ne peut pas dépasser la moitié de la taille de la fenêtre plus un.")
+                return
         except ValueError:
             messagebox.showerror("Erreur", "Veuillez entrer des valeurs entières valides pour la taille de la fenêtre, le saut et le nombre de fréquences.")
             return
-        pad_width = frame_size  # 1 frame de chaque côté
+        pad_width = self.frame_size  # 1 frame de chaque côté
         data_padded = np.pad(self.signal, (pad_width, pad_width), mode="constant")
-        fft=FFT(frame_size,hop_size)
+        fft=FFT(self.frame_size,self.hop_size)
         note=Note()
         self.stft_matrix=fft.stft(data_padded)
-        self.stft_matrix_reconstructed=note.justifieur(self.stft_matrix,self.sample_rate,frame_size,nombre_de_freq)
+        self.stft_matrix_reconstructed=note.justifieur(self.stft_matrix,self.sample_rate,self.frame_size,self.nombre_de_freq)
         data2_padded=fft.istft(self.stft_matrix_reconstructed).astype(np.float32)
 
         self.signal_reconstructed = data2_padded[pad_width:-pad_width]
@@ -260,9 +271,7 @@ class GUI(object):
         if self.stft_matrix is None or self.stft_matrix_reconstructed is None:
             messagebox.showerror("Erreur", "Les spectrogrammes ne sont pas prêts à être affichés.")
             return
-        t1 = np.linspace(0, len(self.signal) / self.sample_rate, len(self.signal))
-        t2 = np.linspace(0, len(self.signal_reconstructed) / self.sample_rate, len(self.signal_reconstructed))
-        Graphiques().spectrogrammes(self.stft_matrix, self.stft_matrix_reconstructed, t1, t2)
+        Graphiques().spectrogrammes(self.stft_matrix, self.stft_matrix_reconstructed, self.sample_rate, self.frame_size, self.hop_size)
         plt.show()
     def save_reconstructed(self):
         """Sauvegarde le signal reconstruit dans un fichier WAV"""
@@ -273,7 +282,6 @@ class GUI(object):
         if save_path:
             save_audio_file(save_path, self.sample_rate, self.signal_reconstructed)
             messagebox.showinfo("Succès", f"Signal reconstruit sauvegardé sous: {save_path}")
-        # Bouton pour sauvegarder le signal reconstruit
     def open_website(self, event):
         webbrowser.open_new("https://github.com/varmule/Sound2Note")
 if __name__ == "__main__":
@@ -282,6 +290,6 @@ if __name__ == "__main__":
     try:
         root.mainloop()
     finally:
-        # Restaurer stdout/stderr pour éviter les problèmes
+        # Restaure stdout/stderr
         sys.stdout = original_stdout
         sys.stderr = original_stderr

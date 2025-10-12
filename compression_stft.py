@@ -305,18 +305,27 @@ class Graphiques:
     def __init__(self):
         """Initialisation de la classe Graphiques"""
         pass
-    def spectrogrammes(self,stft1,stft2,t1,t2):
+
+    def spectrogrammes(self, stft1, stft2, samplerate, frame_size, hop_size):
         """Affiche les spectrogrammes de deux matrices STFT."""
+        # Axe fréquentiel (rfft)
+        f = np.fft.rfftfreq(frame_size, 1 / samplerate)
+        # Axe temporel (en secondes)
+        t1 = np.arange(stft1.shape[1]) * hop_size / samplerate
+        t2 = np.arange(stft2.shape[1]) * hop_size / samplerate
+
         plt.figure("Spectrogramme original")
-        plt.imshow(10 * np.log10(np.abs(stft1+1e-7)),origin='lower', aspect='auto',extent=[0, t1[-1], 20, 20000])
+        plt.imshow(10 * np.log10(np.abs(stft1) + 1e-7),origin='lower', aspect='auto',extent=[t1[0], t1[-1], f[0], f[-1]])
         plt.ylabel("Fréquence (Hz)")
         plt.xlabel("Temps (s)")
         plt.colorbar(label="Amplitude (dB)")
 
-        plt.figure("Spectogramme modifié")
-        plt.imshow(10 * np.log10(np.abs(stft2)+1e-7),origin='lower', aspect='auto',extent=[0, t2[-1], 20, 20000])
+        plt.figure("Spectrogramme modifié")
+        plt.imshow(10 * np.log10(np.abs(stft2) + 1e-7),origin='lower', aspect='auto',extent=[t2[0], t2[-1], f[0], f[-1]])
         plt.ylabel("Fréquence (Hz)")
-        plt.colorbar(label="Amplitude(dB)")
+        plt.xlabel("Temps (s)")
+        plt.colorbar(label="Amplitude (dB)")
+
     def signaux(self,s1,s2,t1,t2):
         """Affiche deux signaux temporels."""
         plt.figure("Signal d'origine")
@@ -364,7 +373,7 @@ def main(file:str,frame_size, hop_size, nombre_de_freq):
     t2 = np.linspace(0,len(data2)/samplerate,len(data2))
     # On refait la STFT du signal modifié pour avoir le spectrogramme pratique
     verif=fft.stft(data2)
-    graphique.spectrogrammes(verif,stft_2,t1,t2)
+    graphique.spectrogrammes(verif,stft_2,samplerate,frame_size,hop_size)
     graphique.signaux(data,data2,t1,t2)
 
     plt.show()

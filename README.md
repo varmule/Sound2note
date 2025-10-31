@@ -1,29 +1,28 @@
-# Projet-son
+# Sound2note
 
-Prend un son, le découpe en paquets de n millissecondes, et arrondit ses fréquences aux notes de musique les plus proches afin de le modifier.
+Application multi-plateformes permettant de convertir un son en notes de musiques.
 
-## Prérequis
+## Lancer l'application
 
-* Python (https://www.python.org/downloads/)
-* Git (https://git-scm.com/downloads)
+Téléchargez le fichier correspondant à votre plaleforme dans les [releases](https://github.com/varmule/Sound2note/releases/latest)
 
-## Installation du programme et des dépendances
-Ouvrez un terminal et exécutez 
+## Compiler
 
-`git clone https://github.com/varmule/Sound2note.git`
+Pour compiler le projet pour votre plateforme, il faut utiliser [briefcase](https://briefcase.readthedocs.io/)
 
-`cd Sound2note`
+1. Commencez par télécharger le code source (`git clone https://github.com/varmule/Sound2note.git` si vous avez [git](https://git-scm.com/))
+2. Créez ensuite un environnement virtuel (`python3 -m venv venv` sur Macos/Linux ou `py3 -m venv venv` sur Windows) et activez le (`source venv/bin/activate` pour mac/linux et `venv\Scripts\activate.bat` pour Windows)
+3. Allez dans le dossier contenant le code source (`cd Sound2note`)
+4. Téléchargez briefcase dans votre environnement virtuel : `pip install briefcase`
+5. Pour compiler l'application, éxécutez ces commandes :
 
-`pip3 install -r requirements.txt` (Sous windows, si cette commande retourne une erreur, essayez `py3 -m pip install -r requirements.txt`)
+```bash
+# Pour que briefcase télécharge les dépendances, etc 
+briefcase create
 
+# Pour compiler l'application
+briefcase build
 
-
-## Execution
-
-*Attention  : sous windows, la commande `python3` (qui fonctionne sous linux et mac) est parfois remplacée par la commande `py3`. Veillez donc à remplacer le début de toutes les commandes si  `python3` ne fonctionne pas.*
-
-Après les commandes précédentes,  exécutez : `python3 gui.py`
-
-## Rajouter des sons
-
-Les fichiers doivent être dans le dossier sounds du projet et au format .wav
+# Pour créer un fichier permettant d'installer l'application
+briefcase package
+```

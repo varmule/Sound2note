@@ -83,6 +83,7 @@ class Note:
         #On retourne la matrice STFT modifiée pour avoir des lignes correspondant à une fft
         data=np.transpose(stft_matrix)
         data2=np.zeros(data.shape,dtype=data.dtype)
+        notes_detectees=[]
 
         for ind in range(len(data)):
             fft=data[ind]
@@ -105,7 +106,7 @@ class Note:
             # volume_des_freq_importantes correspond aux amplitudes des frequences retenues
             volume_des_freq_importantes=fft[amplitudes_retenues]
             # On cree un tableau de la meme taille que fft mais avec uniquement les frequences arrondies aux notes
-            notes=[]
+            notes_trame=[]
 
             fft_arrondie =np.zeros(
                 len(fft), 
@@ -120,10 +121,10 @@ class Note:
                 note=self.nom_de_la_note(gd)
                 # On ajoute la note a la liste des notes
                 try:
-                    if note not in notes:
-                        notes.append(note)
+                    if note not in notes_trame:
+                        notes_trame.append(note)
                 except:
-                    notes.append(note)
+                    notes_trame.append(note)
                 # On recupere l'amplitude de la frequence
                 y=volume_des_freq_importantes[np.where(np.isclose(freq_importantes,gd))]
                 # On cherche la position de la frequence dans le signal modifie
@@ -131,9 +132,9 @@ class Note:
                 # On place la frequence dans le signal modifie
 
                 fft_arrondie[position]=y[0]
-            print(notes)
             data2[ind]=fft_arrondie
-        return np.transpose(data2)
+            notes_detectees.append(notes_trame)
+        return np.transpose(data2), notes_detectees
 
 
 
@@ -336,7 +337,94 @@ class Graphiques:
         plt.xlabel("Temps (s)")
         plt.ylabel("Amplitude")
 
-        plt.plot(t2,s2)
+        plt.plot(t2,s2)    
+
+
+    def piano_roll(self, notes_detectees, hop_size, samplerate, nombre_de_freq):
+        """
+        Piano roll :
+        Affiche les notes détectées au fil du temps sous forme de piano roll.
+        Les notes naturelles sont affichées sur l'axe Y, les dièses sont indiqués en pointillé.
+        Applique un lissage temporel et supprime les notes trop brèves.
+        """
+
+        noms_notes = ["Do", "Do#", "Re", "Re#", "Mi", "Fa", "Fa#", "Sol", "Sol#", "La", "La#", "Si"]
+        octaves = range(2, 7)
+        labels = [f"{n}{o}" for o in octaves for n in noms_notes]
+
+        n_notes = len(labels)
+        n_trames = len(notes_detectees)
+        matrice = np.zeros((n_notes, n_trames), dtype=np.float32)
+
+        for t, trame in enumerate(notes_detectees):
+            if not trame:
+                continue
+            for i, note_nom in enumerate(trame[:nombre_de_freq]):
+                if not isinstance(note_nom, str) or not note_nom:
+                    continue
+                if note_nom not in labels:
+                    continue
+                intensite = 1.0 - i / max(1, nombre_de_freq - 1) if nombre_de_freq > 1 else 1.0
+                matrice[labels.index(note_nom), t] = intensite
+
+        # On supprime les notes courtes (<80 ms)
+        min_frames = int(0.08 * samplerate / hop_size)
+        for i in range(n_notes):
+            active = matrice[i, :] > 0
+            start = None
+            for t in range(n_trames):
+                if active[t] and start is None:
+                    start = t
+                elif not active[t] and start is not None:
+                    if t - start < min_frames:
+                        matrice[i, start:t] = 0
+                    start = None
+
+        # Lissage temporel avec une fenêtre de 20 ms et une fenêtre de Hanning
+        window_size = max(1, int(0.02 * samplerate / hop_size))
+        if window_size > 1:
+            window = np.hanning(window_size)
+            window /= np.sum(window)
+            for i in range(n_notes):
+                matrice[i, :] = np.convolve(matrice[i, :], window, mode="same")
+
+        # Simple normalisation pour que les valeurs soient entre 0 et 1
+        if matrice.max() > 0:
+            matrice /= matrice.max()
+
+        t = np.arange(n_trames) * hop_size / samplerate
+
+        # Affichage du piano roll : 
+        plt.figure("Piano Roll")
+        plt.imshow(
+            matrice,
+            origin="lower",
+            aspect="auto",
+            extent=[t[0], t[-1], 0, n_notes],
+            cmap="YlGnBu",
+            interpolation="nearest"
+        )
+
+        # On trace des lignes horizontales pour chaque note, avec les dièses en pointillés
+        for i, n in enumerate(labels):
+            if "#" in n:  # dièse → ligne fine et pâle
+                plt.axhline(i, color="black", lw=0.3, ls="--", alpha=0.15)
+            else:  # note naturelle → ligne plus visible
+                plt.axhline(i, color="black", lw=0.5, ls="-", alpha=0.4)
+
+        # On n'affiche que les notes naturelles sur l'axe Y pour que ce soit plus lisible
+        positions_naturelles = [i for i, n in enumerate(labels) if "#" not in n]
+        etiquettes_naturelles = [labels[i] for i in positions_naturelles]
+        plt.yticks(positions_naturelles, etiquettes_naturelles)
+
+        plt.xlabel("Temps (s)")
+        plt.ylabel("Notes")
+        plt.title("Piano Roll")
+        plt.colorbar(label="Intensité relative")
+
+        plt.tight_layout()
+
+
 
 
 def main(file:str,frame_size, hop_size, nombre_de_freq):
@@ -354,7 +442,7 @@ def main(file:str,frame_size, hop_size, nombre_de_freq):
     note=Note()
     graphique=Graphiques()
     stft_matrix=fft.stft(data_padded)
-    stft_2=note.justifieur(stft_matrix,samplerate,frame_size,nombre_de_freq)
+    stft_2, notes_detectees=note.justifieur(stft_matrix,samplerate,frame_size,nombre_de_freq)
     data2_padded=fft.istft(stft_2).astype(np.float32)
 
     data2 = data2_padded[pad_width:-pad_width]
@@ -374,6 +462,7 @@ def main(file:str,frame_size, hop_size, nombre_de_freq):
     # On refait la STFT du signal modifié pour avoir le spectrogramme pratique
     verif=fft.stft(data2)
     graphique.spectrogrammes(verif,stft_2,samplerate,frame_size,hop_size)
+    graphique.piano_roll(notes_detectees,hop_size,samplerate,nombre_de_freq)
     graphique.signaux(data,data2,t1,t2)
 
     plt.show()

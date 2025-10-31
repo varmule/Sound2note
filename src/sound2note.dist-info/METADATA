@@ -1,0 +1,11 @@
+Metadata-Version: 2.1
+Briefcase-Version: 0.3.25
+Name: sound2note
+Formal-Name: sound2note
+App-ID: com.example.sound2note
+Version: 0.0.1
+Home-page: https://example.com/sound2note
+Download-URL: https://example.com/sound2note
+Author: varmule
+Author-email: mathias.tablette@gmail.com
+Summary: My first application

@@ -1,5 +1,17 @@
 # sound2note Release Notes
 
-## 0.0.1 (11 Oct 2025)
+## 0.0.1
 
 * Initial release
+* Work with concatenated fft
+* No Gui
+
+## 1.0.0
+
+* Gui using tkinter
+* Use stft to compute the signal
+
+## 2.0.0
+
+* New Gui using toga
+* Packaged app for alls platforms

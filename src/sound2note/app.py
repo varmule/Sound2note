@@ -387,6 +387,7 @@ class Sound2note(toga.App):
 
 
     async def load_audio(self, widget):
+        """Charge un fichier audio WAV et en extrait le signal et la fréquence d'échantillonnage."""
         self.signal = self.sample_rate = self.signal_reconstructed = self.stft_matrix = self.stft_matrix_reconstructed = self.notes = None
         self.psnr_label.visibility = 'hidden'
         path_ini=Path.absolute(Path.joinpath(paths.Paths().app,"resources","sounds"))
@@ -402,6 +403,7 @@ class Sound2note(toga.App):
             self.label_audio.text = "Aucun fichier sélectionné"
     
     async def save_audio(self,widget):
+        """Sauvegarde le signal audio reconstruit dans un fichier WAV."""
         if self.signal_reconstructed is None:
             await self.main_window.dialog(toga.ErrorDialog("Erreur", "Veuillez traiter le signal."))
             return
@@ -410,6 +412,9 @@ class Sound2note(toga.App):
             compression_stft.save_audio_file(self.signal_reconstructed, self.sample_rate, path)
 
     async def record_audio(self, widget):
+        """Enregistre un audio depuis le microphone.
+        Fonctionne avec sounddevice ou miniaudio selon la disponibilité.
+        """
         self.signal = self.sample_rate = self.signal_reconstructed = self.stft_matrix = self.stft_matrix_reconstructed = self.notes = None
         self.psnr_label.visibility = 'hidden'
 
@@ -458,6 +463,7 @@ class Sound2note(toga.App):
 
 
     async def play_original(self, widget):
+        """Joue le signal audio original."""
         if self.signal is not None:
             if miniaudio_available == False:
                 sd.play(self.signal, self.sample_rate)
@@ -476,6 +482,7 @@ class Sound2note(toga.App):
 
 
     async def play_reconstructed(self, widget):
+        """Joue le signal reconstruit à partir des notes de musique."""
         if self.signal_reconstructed is not None:
             if miniaudio_available == False:
                 sd.play(self.signal_reconstructed, self.sample_rate)
@@ -493,7 +500,18 @@ class Sound2note(toga.App):
 
 
     async def calculate_stft(self, widget):
+        """Fonction principale de traitement du signal audio.
+        Elle effectue les étapes suivantes:
+        1. Vérifie que le signal audio est chargé.
+        2. Récupère les paramètres de traitement (taille de la fenêtre, taille du saut, nombre de fréquences).
+        3. Effectue le padding du signal pour éviter les effets de bord.
+        4. Calcule la STFT du signal.
+        5. Arrondit les fréquences pour obtenir des notes de musique.
+        6. Reconstruit le signal audio à partir des notes.
+        7. Calcule et affiche le PSNR entre le signal original et le signal reconstruit.
+        """
         if self.signal is None:
+            # Si aucun signal n'est chargé, on retourne une erreur
             await self.main_window.dialog(toga.ErrorDialog("Erreur", "Aucun fichier audio chargé ou enregistré."))
             return
 
@@ -502,6 +520,7 @@ class Sound2note(toga.App):
         self.nombre_de_freq = int(self.parametres.children[2].children[1].value)
 
         if self.frame_size <= 0 or self.hop_size <= 0 or self.nombre_de_freq <= 0:
+            # Si les paramètres sont invalides, on retourne une erreur
             await self.main_window.dialog(toga.ErrorDialog("Erreur", "Les paramètres doivent être positifs."))
             return
         if self.frame_size < self.hop_size:
@@ -510,24 +529,35 @@ class Sound2note(toga.App):
         # Essayez de comprendre cette ligne, elle est marrante (bon courage)
         if not(self.frame_size & self.frame_size-1==0) or not(self.hop_size & self.hop_size-1==0):
             await self.main_window.dialog(toga.InfoDialog("Attention", "Il est recommandé d'utiliser des tailles de fenêtre et de saut étant des puissances de 2."))
-            return
 
+        # Padding du signal pour éviter les effets de bord, l'effet Gibbs pour les curieux
         pad_width = self.frame_size
         data_padded = np.pad(self.signal, (pad_width, pad_width), mode="constant")
+
+        # Voir compression_stft.py pour comprendre ces classes
         self.fft = compression_stft.FFT(self.frame_size, self.hop_size)
         self.note = compression_stft.Note()
 
+        # On convertit le signal en fréquences temporelles, grâce à la STFT
         self.stft_matrix = self.fft.stft(data_padded)
+
+        # On arrondit les fréquences pour obtenir des notes de musique
         self.stft_matrix_reconstructed, self.notes = self.note.justifieur(
             self.stft_matrix, self.sample_rate, self.frame_size, self.nombre_de_freq
         )
 
+        # On reconvertit les fréquences temporelles en signal audio
         data2_padded = self.fft.istft(self.stft_matrix_reconstructed).astype(np.float32)
+
+        #On enlève le padding
         self.signal_reconstructed = data2_padded[pad_width:-pad_width]
+
+        # Vu qu'on a supprimé des fréquences (et leur intensité), on réadapte le volume du signal reconstruit
         if max(abs(self.signal_reconstructed))!=0:
             coeff = max(abs(self.signal)) / max(abs(self.signal_reconstructed))
             self.signal_reconstructed *= coeff
 
+        # Calcul et affichage du PSNR, qui indique la qualité de la reconstruction  
         psnr_value = compression_stft.psnr(self.signal, self.signal_reconstructed)
         self.psnr_label.text = f"PSNR (valeur élevée = perte faible): {psnr_value:.2f} dB"
         self.psnr_label.visibility = 'visible'
@@ -537,12 +567,14 @@ class Sound2note(toga.App):
 
     # --- Affichage dans Canvas ---
     async def show_signals(self, widget):
+        # plot_signals est une fonction globale définie plus haut
         if self.signal is None or self.signal_reconstructed is None:
             await self.main_window.dialog(toga.ErrorDialog("Erreur", "Veuillez traiter le signal"))
         else:
             plot_signals(self.signal, self.signal_reconstructed, self.sample_rate)
 
     async def show_spectrograms(self, widget):
+        # plot_spectrograms est une fonction globale définie plus haut
         if self.stft_matrix is None or self.stft_matrix_reconstructed is None:
             await self.main_window.dialog(toga.ErrorDialog("Erreur", "Veuillez traiter le signal"))
         else:
@@ -553,6 +585,7 @@ class Sound2note(toga.App):
         if self.notes is None:
             await self.main_window.dialog(toga.ErrorDialog("Erreur", "Veuillez traiter le signal"))
         else:
+            # plot_notes est une fonction globale définie plus haut
             plot_notes(self.notes, self.hop_size, self.sample_rate, self.nombre_de_freq)
 
     async def about(self, widget=None):

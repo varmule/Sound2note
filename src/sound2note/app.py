@@ -526,6 +526,9 @@ class Sound2note(toga.App):
         if self.frame_size < self.hop_size:
             await self.main_window.dialog(toga.ErrorDialog("Erreur", "La taille de la fenêtre doit être supérieure ou égale à la taille du saut."))
             return
+        if self.frame_size//2!=0:
+            await self.main_window.dialog(toga.ErrorDialog("Erreur", "La taille de la fenêtre doit être paire."))
+            return
         # Essayez de comprendre cette ligne, elle est marrante (bon courage)
         if not(self.frame_size & self.frame_size-1==0) or not(self.hop_size & self.hop_size-1==0):
             await self.main_window.dialog(toga.InfoDialog("Attention", "Il est recommandé d'utiliser des tailles de fenêtre et de saut étant des puissances de 2."))

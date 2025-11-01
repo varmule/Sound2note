@@ -17,8 +17,8 @@ Téléchargez le fichier correspondant à votre plaleforme dans les [releases](h
 
 3 paramètres pour la stft:
 
-- frame_size : Nombre de points sur lesquels la fft est calculée. Plus il est élevé, meilleure est la qualité
-- hop size : Nombre de points sur lesquels les fft se superposent. Il est **plus que recommendé** que ce soit un diviseur de la frame size
+- frame_size : Nombre de points sur lesquels la fft est calculée. Plus il est élevé, meilleure est la qualité. Il doit être pair
+- hop size : Nombre de points sur lesquels les fft se superposent. Il est **recommendé** que ce soit un diviseur de la frame size
 - Le nombre de fréquences qui sont conservées. Voir ci dessous
 
 Lorsque le programme "traite" le signal, il effectue ces étapes:
@@ -48,7 +48,8 @@ Il est possible de sauvegarder le signal reconstruit dans un fichier wav
 
 ## Code source
 
-Le code source est contenu dans le dossier src/sound2note
+Le code source est contenu dans le dossier src/sound2note.
+
 compression_stft.py permet surtout de traiter le signal, tandis que app.py intègre les fonctionnalités qui vont avec l'interface graphique.
 Les deux fichiers sont commentés, de sorte qu'ils soient (plutôt) compréhensible pour ceux qui ont une base en python
 

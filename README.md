@@ -1,25 +1,25 @@
 # Sound2note
 
-Application multi-plateformes permettant de convertir un son en notes de musiques.
+Application multi-plateformes permettant de convertir un son en notes de musique.
 
 ## Lancer l'application
 
-Téléchargez le fichier correspondant à votre plaleforme dans les [releases](https://github.com/varmule/Sound2note/releases/latest), puis lancez l'application
+Téléchargez le fichier correspondant à votre plateforme dans les [releases](https://github.com/varmule/Sound2note/releases/latest), puis lancez l'application.
 
 ## Fonctionnalités
 
-### Pour charger le signal sonore
+### Chargement du signal sonore
 
-- Possibilité de charger un fichier wav (quelques fichiers fournis)
-- Possibilité de s'enregistrer
+- Chargement d'un fichier `.wav` (quelques fichiers fournis)
+- Possibilité de s'enregistrer directement
 
 ### Pour traiter le signal
 
 3 paramètres pour la stft:
 
 - frame_size : Nombre de points sur lesquels la fft est calculée. Plus il est élevé, meilleure est la qualité. Il doit être pair
-- hop size : Nombre de points sur lesquels les fft se superposent. Il est **recommendé** que ce soit un diviseur de la frame size
-- Le nombre de fréquences qui sont conservées. Voir ci dessous
+- hop size : Nombre de points sur lesquels les fft se superposent. Il est **recommandé** que ce soit un diviseur de la frame size
+- Le nombre de fréquences qui sont conservées. Voir ci-dessous
 
 Lorsque le programme "traite" le signal, il effectue ces étapes:
 
@@ -36,7 +36,7 @@ Il est possible de jouer les signaux, que ce soit celui original ou celui recons
 
 ### Graphiques
 
-Après avoir traiter le signal, l'application propose 3 graphiques :
+Après avoir traité le signal, l'application propose 3 graphiques :
 
 - Un graphique comparatif des signaux
 - Un graphique comparatif des spectrogrammes (qui montrent l'évolution des fréquences dans le temps)
@@ -44,32 +44,57 @@ Après avoir traiter le signal, l'application propose 3 graphiques :
 
 ### Sauvegarde
 
-Il est possible de sauvegarder le signal reconstruit dans un fichier wav
+Il est possible de sauvegarder le signal reconstruit dans un fichier `.wav`
 
 ## Code source
 
 Le code source est contenu dans le dossier src/sound2note.
 
-compression_stft.py permet surtout de traiter le signal, tandis que app.py intègre les fonctionnalités qui vont avec l'interface graphique.
-Les deux fichiers sont commentés, de sorte qu'ils soient (plutôt) compréhensible pour ceux qui ont une base en python
+- `compression_stft.py` : traitement du signal et autre
+- `app.py` : interface graphique et fonctionnalités associées
 
-## Compiler l'application
+Les deux fichiers sont commentés afin d’être (plutôt) compréhensibles pour toute personne disposant de bases en Python.
+
+## Si aucun binaire n'est fourni pour votre plateforme
+
+Deux possibilités s'offrent à vous :
+
+- Compiler l'application
+- Utiliser `compression_stft.py` en ligne de commande
+
+### Compiler l'application
 
 Pour compiler le projet pour votre plateforme, il faut utiliser [briefcase](https://briefcase.readthedocs.io/)
 
 1. Commencez par télécharger le code source (`git clone https://github.com/varmule/Sound2note.git` si vous avez [git](https://git-scm.com/))
-2. Créez ensuite un environnement virtuel (`python3 -m venv venv` sur Macos/Linux ou `py3 -m venv venv` sur Windows) et activez le (`source venv/bin/activate` pour mac/linux et `venv\Scripts\activate.bat` pour Windows)
+2. Créez ensuite un environnement virtuel (`python3 -m venv venv` sur macOS / Linux ou `py3 -m venv venv` sur Windows) et activez le (`source venv/bin/activate` pour macOS / Linux et `venv\Scripts\activate.bat` pour Windows)
 3. Allez dans le dossier contenant le code source (`cd Sound2note`)
 4. Téléchargez briefcase dans votre environnement virtuel : `pip install briefcase`
-5. Pour compiler l'application, éxécutez ces commandes :
+5. Pour compiler l'application, exécutez ces commandes :
 
 ```bash
-# Pour que briefcase télécharge les dépendances, etc 
+# Téléchargement des dépendances
 briefcase create
 
-# Pour compiler l'application
+# Compilation de l'application
 briefcase build
 
-# Pour créer un fichier permettant d'installer l'application
+# Création du fichier d’installation
 briefcase package
+```
+
+### Lancer `compression_stft.py` en tant qu'outil en ligne de commande
+
+Allez dans le répertoire contenant `compression_stft.py` puis exécutez
+
+```bash
+python compression_stft.py --help
+```
+
+Vous obtiendrez la liste des paramètres disponibles.
+
+Exemple de commande :
+
+```bash
+python compression_stft.py resources/SNCF.wav --frame_size 2048  --hop_size 512 --nombre_de_freq 3
 ```
